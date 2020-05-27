@@ -6,13 +6,13 @@ import psycopg2, os
 
 app = Flask(__name__)
 
-# DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = os.environ['DATABASE_URL']
 
-# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:user@localhost:5432/cougardb"  
+# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:user@localhost:5432/cougardb"  
  #postgresql+psycopg2://user:password@hostname/database_name'
 
 
