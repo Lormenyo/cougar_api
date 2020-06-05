@@ -40,7 +40,7 @@ class User(db.Model):
 
 
 class RideRequest(db.Model):
-    __tablename__ = 'riderequests'
+    __tablename__ = 'ride requests'
 
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String())
