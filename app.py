@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import datetime
@@ -6,13 +6,13 @@ import psycopg2, os
 
 app = Flask(__name__)
 
-DATABASE_URL = os.environ['DATABASE_URL']
+# DATABASE_URL = os.environ['DATABASE_URL']
 
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+# app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:user@localhost:5432/cougardb"  
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:user@localhost:5432/cougardb"  
  #postgresql+psycopg2://user:password@hostname/database_name'
 
 
@@ -73,6 +73,33 @@ class RideRequest(db.Model):
 
 
 
+class RideFare(db.Model):
+    __tablename__ = 'ride fare'
+
+    id = db.Column(db.Integer, primary_key=True)
+    currentLocation = db.Column(db.String())
+    destination = db.Column(db.String())
+    price = db.Column(db.String())
+    
+
+    def __init__(self, price, currentLocation, destination):
+        self.currentLocation = currentLocation
+        self.destination = destination
+        self.price = price
+        
+
+    def serialize(self):
+        return {
+            "currentLocation":self.currentLocation,
+            "destination":self.destination,
+            "price": self.price,
+        }
+
+    def __repr__(self):
+        return f"<User {self.currentLocation}>"
+
+
+
 @app.route('/api', methods=['POST'])
 def index():
     d = {}
@@ -111,6 +138,26 @@ def ride():
 @app.route('/getRideRequest', methods=['GET'])
 def getRideRequest():
     return jsonify({'Requests': list(map(lambda dev: dev.serialize(), RideRequest.query.all()))})
+
+
+@app.route('/postFares', methods=['POST'])
+def postFares():
+    d = {}
+    d['currentLocation'] = str(request.form['currentLocation'])
+    d['destination'] = str(request.form['destination'])
+    d['fare'] = str(request.form['fare'])
+   
+    jd = jsonify(d)
+    new_fare = RideFare(currentLocation=d['currentLocation'], destination=d['destination'], price=d['fare'])
+    db.session.add(new_fare)
+    db.session.commit()
+    return "<h1>New Fare: {} to {} costs {} <h1>".format(d['currentLocation'], d['destination'], d['fare'] )
+
+
+@app.route('/newFares', methods=['GET'])
+def newFares():
+    return render_template("newfare.html")
+
 
 if __name__ == '__main__':
     app.run()
