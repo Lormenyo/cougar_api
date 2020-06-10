@@ -130,11 +130,7 @@ def ride():
     d['destination'] = str(request.form['destination'])
     # print(d['firstName'])
 
-       # Get available driver
-    available_drivers = User.query.filter_by(type_of_user="driver").first()
-    # Get fare
-    fare = RideFare.query.filter_by(currentLocation = d['currentLocation'], destination=d['destination'] ).first().price
-    print(fare)
+
     # fare=10
 
     # http://127.0.0.1:5000/api?firstName=Hannah&phoneNumber=233266180856
@@ -144,7 +140,7 @@ def ride():
     db.session.commit()
 
  
-    return {"drivers": available_drivers, "fare":fare}
+    return f"{d['currentLocation']}-{d['destination']}"
 
 
 @app.route('/getRideRequest', methods=['GET'])
