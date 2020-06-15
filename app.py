@@ -100,8 +100,6 @@ class RideFare(db.Model):
 
 
 
-
-
 @app.route('/api', methods=['POST'])
 def index():
     d = {}
@@ -130,7 +128,6 @@ def ride():
     d['destination'] = str(request.form['destination'])
     # print(d['firstName'])
 
-
     # fare=10
 
     # http://127.0.0.1:5000/api?firstName=Hannah&phoneNumber=233266180856
@@ -157,8 +154,12 @@ def getRideDetails():
     available_drivers = [ [user.first_name, user.phone_number] for user in User.query.filter_by(type_of_user="driver").all()]
     print(available_drivers)
     # Get fare
-    fare = RideFare.query.filter_by(currentLocation = currentLocation, destination=destination).first().price
-  
+    
+    if (RideFare.query.filter_by(currentLocation = currentLocation, destination=destination).first()) == None:
+        fare = '4.00'
+    else:
+        fare = RideFare.query.filter_by(currentLocation = currentLocation, destination=destination).first().price
+
     return jsonify({'RideDetails': [available_drivers, fare]})
 
 
@@ -183,3 +184,10 @@ def newFares():
 
 if __name__ == '__main__':
     app.run()
+
+
+# TODO: 
+# Create page to add new drivers
+# Create admin page to show app analytics
+# iOS integration
+# bus ride reservation
